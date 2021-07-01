@@ -1,31 +1,10 @@
 import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from datetime import datetime
 import pandas as pd
 from utils import exchange_into_rub
 
-
 COUNTRIES_LIST = ['RUS', 'rus', 'ABH', 'abh', 'AUS', 'aus']
 CURRENCIES_LIST = ['RUB', 'rub', 'USD', 'usd', 'EUR', 'eur']
-
-
-def create_tables():
-    create_limits_query = '''CREATE TABLE limits
-        (ID INT PRIMARY KEY     NOT NULL,
-        COUNTRY TEXT    NOT NULL,
-        CUR TEXT    NOT NULL,
-        MAX_LIMIT REAL);'''
-    create_history_query = '''CREATE TABLE history
-        (ID INT     NOT NULL,
-        DATE TIMESTAMP  NOT NULL,
-        AMOUNT REAL,
-        CUR TEXT    NOT NULL,
-        COUNTRY TEXT    NOT NULL);
-        '''
-    for query in [create_limits_query, create_history_query]:
-        cursor.execute(query)
-        connection.commit()
-        print('Table successfully created')
 
 
 def drop_table(table_name):
@@ -104,6 +83,7 @@ def update_limits(id, connection, cursor, currency=None, country=None, max_limit
                 print(f'Limits updated: id = {id}, {columns[i]} = {item}')
         return get_limit_by_id(id, cursor)
 
+
 def delete_from_limits_by_id(id, connection, cursor):
     delete_query = '''Delete from limits where id = {}'''
     cursor.execute(delete_query.format(id))
@@ -120,10 +100,10 @@ def show_all_pretty_tables():
 
 if __name__ == '__main__':
     connection = psycopg2.connect(user='postgres',
-                                      password='1111',
-                                      host='127.0.0.1',
-                                      port='5432',
-                                      database='postgres_db')
+                                  password='1111',
+                                  host='127.0.0.1',
+                                  port='5432',
+                                  database='postgres_db')
     # connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = connection.cursor()
     # drop_table('limits')
