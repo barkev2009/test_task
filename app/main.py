@@ -12,7 +12,7 @@ async def get_all_limits_handler(request):
 
 async def get_limit_by_id_handler(request):
     try:
-        id = request.query['id']
+        id = int(str(request.url).split('/')[-1])
         response = get_limit_by_id(id, cursor)
         request_obj = {'status': 'success', 'data': response}
         return web.Response(text=json.dumps(request_obj, indent=4), status=200)
@@ -69,7 +69,7 @@ async def put_limits_handler(request):
 
 async def delete_limit_handler(request):
     try:
-        id = request.query['id']
+        id = int(str(request.url).split('/')[-1])
         delete_from_limits_by_id(id, connection, cursor)
         request_obj = {'status': 'success', 'message': f'limit of id={id} deleted'}
         return web.Response(text=json.dumps(request_obj, indent=4), status=200)
@@ -89,11 +89,11 @@ if __name__ == '__main__':
     app = web.Application()
     app.add_routes([
         web.get('/api/limits', get_all_limits_handler),
-        web.get('/api/limit', get_limit_by_id_handler),
-        web.post('/api/limit', post_limits_handler),
+        web.get('/api/limits/{id}', get_limit_by_id_handler),
+        web.post('/api/limits', post_limits_handler),
         web.post('/api/history', post_history_handler),
-        web.put('/api/limit', put_limits_handler),
-        web.delete('/api/limit', delete_limit_handler),
+        web.put('/api/limits/', put_limits_handler),
+        web.delete('/api/limits/{id}', delete_limit_handler),
     ])
 
     web.run_app(app)

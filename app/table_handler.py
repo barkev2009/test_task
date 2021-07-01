@@ -104,12 +104,5 @@ if __name__ == '__main__':
                                   host='127.0.0.1',
                                   port='5432',
                                   database='postgres_db')
-    # connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = connection.cursor()
-    # drop_table('limits')
-    # drop_table('history')
-    # create_tables()
-    # insert_into_limits(3, 'RUS', 'USD', 5000, connection, cursor)
-    # insert_into_history(1, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 1100, 'USD', 'RUS', connection, cursor)
-    # delete_from_limits_by_id(2)
     show_all_pretty_tables()
