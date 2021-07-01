@@ -1,7 +1,6 @@
 from aiohttp import web
 import json
-import psycopg2
-from table_handler import *
+from app.table_handler import *
 from datetime import datetime
 
 
