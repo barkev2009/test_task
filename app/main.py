@@ -27,7 +27,10 @@ async def post_limits_handler(request):
                                            request.query['max_limit']
         print(f'Creating a new record in limits table')
         result = insert_into_limits(int(id), country.upper(), currency.upper(), float(max_limit), connection, cursor)
-        request_obj = {'status': 'success', 'message': 'limits updated'}
+        if 'failure' not in result.keys():
+            request_obj = {'status': 'success', 'message': 'limits updated', 'result': result}
+        else:
+            request_obj = {'status': 'failure', 'message': 'limits not updated', 'result': result}
         return web.Response(text=json.dumps(request_obj, indent=4), status=200)
     except Exception as e:
         request_obj = {'status': 'failed', 'message': str(e)}
@@ -42,7 +45,10 @@ async def post_history_handler(request):
         date_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S') if date == 'now' else date.replace('T', ' ')
         result = insert_into_history(int(id), date_time, float(amount), currency.upper(), country.upper(),
                                      connection, cursor)
-        request_obj = {'status': 'success', 'message': 'history updated'}
+        if 'failure' not in result.keys():
+            request_obj = {'status': 'success', 'message': 'history updated', 'result': result}
+        else:
+            request_obj = {'status': 'failure', 'message': 'history not updated', 'result': result}
         return web.Response(text=json.dumps(request_obj, indent=4), status=200)
     except Exception as e:
         request_obj = {'status': 'failed', 'message': str(e)}

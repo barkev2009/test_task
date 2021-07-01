@@ -37,9 +37,11 @@ def insert_into_limits(id, country: str, currency: str, max_limit, connection, c
         cursor.execute(query.format(id, country.upper(), currency.upper(), max_limit))
         connection.commit()
         print(f'Line ({id}, {country.upper()}, {currency.upper()}, {max_limit}) successfully inserted')
-        return get_limits_table(cursor)
+        return get_limit_by_id(id, cursor)
     else:
-        print('Failed to update limits. Please, check your input')
+        message = 'Failed to update limits. Please, check your input'
+        print(message)
+        return {'failure': message}
 
 
 def insert_into_history(id, date, amount, currency: str, country: str, connection, cursor):
@@ -66,9 +68,13 @@ def insert_into_history(id, date, amount, currency: str, country: str, connectio
             print(f'History successfully updated')
             return get_history_table(cursor)
         else:
-            print(f'Sum within a current month ({overall_to_date + rub_amount}) exceeds max_limit ({max_limit})')
+            message = f'Sum within a current month ({overall_to_date + rub_amount}) exceeds max_limit ({max_limit})'
+            print(message)
+            return {'failure': message}
     else:
-        print('Failed to update limits. Please, check your input')
+        message = 'Failed to update history. Please, check your inputs'
+        print(message)
+        return {'failure': message}
 
 
 def update_limits(id, connection, cursor, currency=None, country=None, max_limit=None):
