@@ -20,9 +20,10 @@ async def get_limit_by_id_handler(request):
         response = get_limit_by_id(id, cursor)
         if response.get('failure') is None:
             request_obj = {'status': 'success', 'data': response}
+            return web.Response(text=json.dumps(request_obj, indent=4), status=200)
         else:
             request_obj = {'status': 'failure', 'message': f'ID={id} does not exist'}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)
@@ -50,9 +51,10 @@ async def post_limits_handler(request):
         result = insert_into_limits(int(id), country.upper(), currency.upper(), float(max_limit), connection, cursor)
         if result.get('failure') is None:
             request_obj = {'status': 'success', 'message': 'limits updated', 'result': result}
+            return web.Response(text=json.dumps(request_obj, indent=4), status=200)
         else:
             request_obj = {'status': 'failure', 'message': 'limits not updated', 'result': result}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)
@@ -68,9 +70,10 @@ async def post_history_handler(request):
                                      connection, cursor)
         if result.get('failure') is None:
             request_obj = {'status': 'success', 'message': 'history updated', 'result': result}
+            return web.Response(text=json.dumps(request_obj, indent=4), status=200)
         else:
             request_obj = {'status': 'failure', 'message': 'history not updated', 'result': result}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)
@@ -86,9 +89,10 @@ async def put_limits_handler(request):
         result = update_limits(id, connection, cursor, currency, country, max_limit)
         if result is None:
             request_obj = {'status': 'failure', 'message': 'limits not updated', 'result': 'check inputs'}
+            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
         else:
             request_obj = {'status': 'success', 'message': 'limits updated', 'result': result}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=200)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         print(e)
@@ -101,9 +105,10 @@ async def delete_limit_handler(request):
         result = delete_from_limits_by_id(id, connection, cursor)
         if result.get('failure') is None:
             request_obj = {'status': 'success', 'message': f'limit of id={id} deleted'}
+            return web.Response(text=json.dumps(request_obj, indent=4), status=200)
         else:
             request_obj = {'status': 'failure', 'message': f'limit of id={id} does not exist'}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)

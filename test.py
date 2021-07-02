@@ -14,8 +14,13 @@ def test_put_limit_cur_max_limit():
            response.json()['result']['CUR'] == 'RUB' and response.json()['result']['MAX_LIMIT'] == 1000
 
 
-def test_put_limit_incorrect():
+def test_put_limit_incorrect_value():
     response = requests.put('http://127.0.0.1:8000/api/limits?id=4&cur=r&max_limit=1000')
+    assert response.json()['status'] == 'failure'
+
+
+def test_put_limit_incorrect_key():
+    response = requests.put('http://127.0.0.1:8000/api/limits?id=4&maxx_limit=1000')
     assert response.json()['status'] == 'failure'
 
 

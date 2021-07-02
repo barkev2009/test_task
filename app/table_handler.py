@@ -85,6 +85,7 @@ def insert_into_history(id, date, amount, currency: str, country: str, connectio
 def update_limits(id, connection, cursor, currency=None, country=None, max_limit=None):
     columns = ['CUR', 'COUNTRY', 'MAX_LIMIT']
     if country in COUNTRIES_LIST + [None] and currency in CURRENCIES_LIST + [None]:
+        counter = 0
         for i, item in enumerate([currency, country, max_limit]):
             if item is not None:
                 update_query = '''UPDATE limits SET {} = '{}' WHERE ID = {}''' if columns[i] != 'MAX_LIMIT' else \
@@ -92,7 +93,11 @@ def update_limits(id, connection, cursor, currency=None, country=None, max_limit
                 cursor.execute(update_query.format(columns[i], item, id))
                 connection.commit()
                 print(f'Limits updated: id = {id}, {columns[i]} = {item}')
-        return get_limit_by_id(id, cursor)
+                counter += 1
+        if counter == 0:
+            return None
+        else:
+            return get_limit_by_id(id, cursor)
 
 
 def delete_from_limits_by_id(id, connection, cursor):

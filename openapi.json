@@ -66,6 +66,20 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "A failure to get all limits' table due to unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "dict",
+                  "example": {
+                    "status": "failure",
+                    "message": "ERROR_MESSAGE"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -92,9 +106,48 @@
                 }
               }
             }
+          },
+          "418": {
+            "description": "A failure to get limit record possibly due to non-existent ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "dict",
+                  "example": {
+                    "status": "failure",
+                    "message": "ID=444 does not exist"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "A failure to get limit record due to unknown error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "dict",
+                  "example": {
+                    "status": "failure",
+                    "message": "ERROR_MESSAGE"
+                  }
+                }
+              }
+            }
           }
         }
-      }
+      },
+      "parameters": [
+        {
+          "name": "id",
+          "description": "ID to get limit record of",
+          "in": "path",
+          "required": true,
+          "examples": {
+            "value": [1, 2, 3]
+          }
+        }
+      ]
     }
   }
 }
