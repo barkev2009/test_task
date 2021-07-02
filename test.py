@@ -34,7 +34,12 @@ def test_delete_limit_incorrect():
     assert response.json()['status'] == 'failure'
 
 
-def test_post_incorrect_limit():
+def test_post_limit_incorrect_key():
+    response = requests.post('http://127.0.0.1:8000/api/limits?id=4&currea=usd&country=rus&max_limit=4000')
+    assert response.json()['status'] == 'failure'
+
+
+def test_post_limit_incorrect_value():
     response = requests.post('http://127.0.0.1:8000/api/limits?id=4&cur=us&country=rus&max_limit=4000')
     assert response.json()['status'] == 'failure'
 
@@ -51,17 +56,22 @@ def test_post_history_date_12():
 
 def test_post_history_incorrect_sum():
     response = requests.post('http://127.0.0.1:8000/api/history?id=1&cur=usd&country=rus&amount=99999&date=now')
-    assert response.json()['status'] == 'failure'
+    assert response.json()['status'] == 'failure' and response.status_code == 400
 
 
 def test_post_history_incorrect_id():
     response = requests.post('http://127.0.0.1:8000/api/history?id=444&cur=usd&country=rus&amount=9&date=now')
-    assert response.json()['status'] == 'failure'
+    assert response.json()['status'] == 'failure' and response.status_code == 500
 
 
-def test_post_history_incorrect_cur():
+def test_post_history_incorrect_country():
     response = requests.post('http://127.0.0.1:8000/api/history?id=1&cur=usd&country=ru&amount=9&date=now')
-    assert response.json()['status'] == 'failure'
+    assert response.json()['status'] == 'failure' and response.status_code == 418
+
+
+def test_post_history_incorrect_key():
+    response = requests.post('http://127.0.0.1:8000/api/history?id=1&cur=usd&countr=rus&amount=9&date=now')
+    assert response.json()['status'] == 'failure' and response.status_code == 500
 
 
 def test_get_all_limits():

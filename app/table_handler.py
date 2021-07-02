@@ -129,5 +129,3 @@ if __name__ == '__main__':
     cursor = connection.cursor()
 
     show_all_pretty_tables()
-    delete_from_limits_by_id(444, connection, cursor)
-    show_all_pretty_tables()

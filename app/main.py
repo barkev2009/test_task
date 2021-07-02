@@ -72,8 +72,12 @@ async def post_history_handler(request):
             request_obj = {'status': 'success', 'message': 'history updated', 'result': result}
             return web.Response(text=json.dumps(request_obj, indent=4), status=200)
         else:
+            if 'exceeds' in result.get('failure'):
+                status_code = 400
+            else:
+                status_code = 418
             request_obj = {'status': 'failure', 'message': 'history not updated', 'result': result}
-            return web.Response(text=json.dumps(request_obj, indent=4), status=418)
+            return web.Response(text=json.dumps(request_obj, indent=4), status=status_code)
     except Exception as e:
         request_obj = {'status': 'failure', 'message': str(e)}
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)
@@ -126,7 +130,6 @@ if __name__ == '__main__':
     app.add_routes([
         web.get('/api/limits', get_all_limits_handler),
         web.get('/api/limits/{id}', get_limit_by_id_handler),
-        web.get('/api/history', get_all_history_handler),
         web.post('/api/limits', post_limits_handler),
         web.post('/api/history', post_history_handler),
         web.put('/api/limits', put_limits_handler),
