@@ -1,5 +1,4 @@
 aiohttp
-json
 psycopg2
 datetime
 pandas
