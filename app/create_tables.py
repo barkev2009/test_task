@@ -1,6 +1,8 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from app.table_handler import DATABASE_NAME, insert_into_limits
+from app.table_handler import insert_into_limits
+from app import DATABASE_NAME
+
 
 def create_db():
     connection = psycopg2.connect(user='postgres',
