@@ -1,0 +1,100 @@
+{
+  "openapi": "3.1.0",
+  "components": {},
+  "info": {
+    "title": "test_task",
+    "description": "API for dealing with transactions history based on limits table",
+    "contact": {
+      "name": "Grigory Kovshov",
+      "email": "barkev2009@bk.ru"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://{host}:{port}/api",
+      "description": "Main server",
+      "variables": {
+        "host": {
+          "default": "127.0.0.1",
+          "description": "local host"
+        },
+        "port": {
+          "default": "8000"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/limits": {
+      "get": {
+        "description": "Returns table of all limits",
+        "responses": {
+          "200": {
+            "description": "A JSON of all limits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "list",
+                  "example": {
+                    "status": "success",
+                    "data": [
+                    {
+                        "ID": 1,
+                        "COUNTRY": "RUS",
+                        "CUR": "RUB",
+                        "MAX_LIMIT": 5000.0
+                    },
+                    {
+                        "ID": 2,
+                        "COUNTRY": "AUS",
+                        "CUR": "USD",
+                        "MAX_LIMIT": 5000.0
+                    },
+                      {
+                        "ID": 3,
+                        "COUNTRY": "ABH",
+                        "CUR": "EUR",
+                        "MAX_LIMIT": 5000.0
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/limits/{id}": {
+      "get": {
+        "description": "Returns a limit record for a certain ID",
+        "responses": {
+          "200": {
+            "description": "A limit record for a certain ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "dict",
+                  "example": {
+                    "status": "success",
+                    "data": {
+                      "ID": 1,
+                      "COUNTRY": "RUS",
+                      "CUR": "RUB",
+                      "MAX_LIMIT": 5000.0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

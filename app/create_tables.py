@@ -1,6 +1,6 @@
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-
+from app.table_handler import DATABASE_NAME, insert_into_limits
 
 def create_db():
     connection = psycopg2.connect(user='postgres',
@@ -9,8 +9,8 @@ def create_db():
                                   port='5432')
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     cursor = connection.cursor()
-    sql_create_database = 'create database postgres_db'
-    cursor.execute(sql_create_database)
+    sql_create_database = 'create database {}'
+    cursor.execute(sql_create_database.format(DATABASE_NAME))
     cursor.close()
     connection.close()
 
@@ -20,7 +20,7 @@ def create_tables():
                                   password='1111',
                                   host='127.0.0.1',
                                   port='5432',
-                                  database='postgres_db')
+                                  database=DATABASE_NAME)
     cursor = connection.cursor()
     create_limits_query = '''CREATE TABLE limits
         (ID INT PRIMARY KEY     NOT NULL,
@@ -38,10 +38,13 @@ def create_tables():
         cursor.execute(query)
         connection.commit()
         print('Table successfully created')
+    insert_into_limits(1, 'RUS', 'RUB', 5000, connection, cursor)
+    insert_into_limits(2, 'AUS', 'USD', 5000, connection, cursor)
+    insert_into_limits(3, 'ABH', 'EUR', 5000, connection, cursor)
     cursor.close()
     connection.close()
 
 
 if __name__ == '__main__':
-    create_db()
+    # create_db()
     create_tables()

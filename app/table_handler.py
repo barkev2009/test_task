@@ -5,6 +5,7 @@ from utils import exchange_into_rub
 
 COUNTRIES_LIST = ['RUS', 'rus', 'ABH', 'abh', 'AUS', 'aus']
 CURRENCIES_LIST = ['RUB', 'rub', 'USD', 'usd', 'EUR', 'eur']
+DATABASE_NAME= 'postgres_db'
 
 
 def drop_table(table_name):
@@ -20,9 +21,12 @@ def get_limits_table(cursor):
 
 
 def get_limit_by_id(id, cursor):
-    cursor.execute('''SELECT * FROM limits WHERE id = {}'''.format(id))
-    rows = cursor.fetchall()
-    return [dict(zip(['ID', 'COUNTRY', 'CUR', 'MAX_LIMIT'], row)) for row in rows]
+    try:
+        cursor.execute('''SELECT * FROM limits WHERE id = {}'''.format(id))
+        row = cursor.fetchone()
+        return dict(zip(['ID', 'COUNTRY', 'CUR', 'MAX_LIMIT'], row))
+    except Exception as e:
+        return {'failure': f'ID={id} does not exist'}
 
 
 def get_history_table(cursor):
@@ -66,9 +70,10 @@ def insert_into_history(id, date, amount, currency: str, country: str, connectio
             cursor.execute(insert_query.format(id, date, amount, currency.upper(), country.upper()))
             connection.commit()
             print(f'History successfully updated')
-            return get_history_table(cursor)
+            return {'message': 'history successfully updated'}
         else:
-            message = f'Sum within a current month ({overall_to_date + rub_amount}) exceeds max_limit ({max_limit})'
+            message = f'Sum within a current month ({overall_to_date + rub_amount} rub) ' \
+                      f'exceeds max_limit ({max_limit} rub)'
             print(message)
             return {'failure': message}
     else:
@@ -91,10 +96,16 @@ def update_limits(id, connection, cursor, currency=None, country=None, max_limit
 
 
 def delete_from_limits_by_id(id, connection, cursor):
-    delete_query = '''Delete from limits where id = {}'''
-    cursor.execute(delete_query.format(id))
-    connection.commit()
-    print(f'Record with id={id} deleted')
+    check_for_existence = get_limit_by_id(id, cursor)
+    if check_for_existence.get('failure') is None:
+        delete_query = '''Delete from limits where id = {}'''
+        cursor.execute(delete_query.format(id))
+        connection.commit()
+        print(f'Record with id={id} deleted')
+        return {'status': 'success', 'message': f'Record with id={id} deleted'}
+    else:
+        print(f'Failed to delete, ID={id} does not exist')
+        return {'failure': f'Failed to delete, ID={id} does not exist'}
 
 
 def show_all_pretty_tables():
@@ -109,6 +120,9 @@ if __name__ == '__main__':
                                   password='1111',
                                   host='127.0.0.1',
                                   port='5432',
-                                  database='postgres_db')
+                                  database=DATABASE_NAME)
     cursor = connection.cursor()
+
+    show_all_pretty_tables()
+    delete_from_limits_by_id(444, connection, cursor)
     show_all_pretty_tables()
