@@ -5,6 +5,10 @@ from app import DATABASE_NAME
 
 
 def create_db():
+    """
+    Create PostgreSQL database with name from app/__init__.py
+    :return:
+    """
     connection = psycopg2.connect(user='postgres',
                                   password='1111',
                                   host='127.0.0.1',
@@ -18,6 +22,11 @@ def create_db():
 
 
 def create_tables():
+    """
+    Create limits and history table in PostgreSQL database
+    and insert first 3 rows into limits table for proper testing
+    :return:
+    """
     connection = psycopg2.connect(user='postgres',
                                   password='1111',
                                   host='127.0.0.1',

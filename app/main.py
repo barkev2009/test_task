@@ -5,6 +5,11 @@ from datetime import datetime
 
 
 async def get_all_limits_handler(request):
+    """
+    Handler for method 'GET', entire limits table
+    :param request:
+    :return:
+    """
     try:
         table = get_limits_table(cursor)
         request_obj = {'status': 'success', 'data': table}
@@ -15,6 +20,11 @@ async def get_all_limits_handler(request):
 
 
 async def get_limit_by_id_handler(request):
+    """
+    Handler for method 'GET', row with a certain ID of the limits table
+    :param request:
+    :return:
+    """
     try:
         id = int(str(request.url).split('/')[-1])
         response = get_limit_by_id(id, cursor)
@@ -29,21 +39,12 @@ async def get_limit_by_id_handler(request):
         return web.Response(text=json.dumps(request_obj, indent=4), status=500)
 
 
-async def get_all_history_handler(request):
-    try:
-        table = get_history_table(cursor)
-        request_obj = {'status': 'success', 'data': table}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=200)
-    except Exception as e:
-        request_obj = {'status': 'failure', 'message': str(e)}
-        return web.Response(text=json.dumps(request_obj, indent=4), status=500)
-
-
-async def get_history_by_id_handler():
-    pass
-
-
 async def post_limits_handler(request):
+    """
+    Handler for method 'POST', new limit record
+    :param request:
+    :return:
+    """
     try:
         id, country, currency, max_limit = request.query['id'], request.query['country'], request.query['cur'], \
                                            request.query['max_limit']
@@ -61,6 +62,11 @@ async def post_limits_handler(request):
 
 
 async def post_history_handler(request):
+    """
+    Handler for method 'POST', new history record
+    :param request:
+    :return:
+    """
     try:
         id, date, amount, currency, country = request.query['id'], request.query['date'], request.query['amount'], \
                                            request.query['cur'], request.query['country']
@@ -84,6 +90,11 @@ async def post_history_handler(request):
 
 
 async def put_limits_handler(request):
+    """
+    Handler for method 'PUT', update row with a certain ID of the limits table
+    :param request:
+    :return:
+    """
     try:
         id = int(request.query['id'])
         country = request.query['country'].upper() if 'country' in request.query.keys() else None
@@ -104,6 +115,11 @@ async def put_limits_handler(request):
 
 
 async def delete_limit_handler(request):
+    """
+    Handler for method 'DELETE', remove a row with a certain ID from the limits table
+    :param request:
+    :return:
+    """
     try:
         id = int(str(request.url).split('/')[-1])
         result = delete_from_limits_by_id(id, connection, cursor)

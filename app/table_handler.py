@@ -6,18 +6,33 @@ from app import CURRENCIES_LIST, COUNTRIES_LIST, DATABASE_NAME
 
 
 def drop_table(table_name):
+    """
+    Delete the entire table from the database
+    :param table_name: name of the table subject for deletion
+    """
     cursor.execute(f'drop table {table_name}')
     connection.commit()
     print('Table dropped')
 
 
 def get_limits_table(cursor):
+    """
+    Return the entire limits table from the database
+    :param cursor: cursor instance
+    :return: rows of the limits table
+    """
     cursor.execute('''SELECT * FROM limits''')
     rows = cursor.fetchall()
     return [dict(zip(['ID', 'COUNTRY', 'CUR', 'MAX_LIMIT'], row)) for row in rows]
 
 
 def get_limit_by_id(id, cursor):
+    """
+    Return the row of limits table with a certain ID from the database
+    :param id:
+    :param cursor: cursor instance
+    :return:
+    """
     try:
         cursor.execute('''SELECT * FROM limits WHERE id = {}'''.format(id))
         row = cursor.fetchone()
@@ -27,12 +42,27 @@ def get_limit_by_id(id, cursor):
 
 
 def get_history_table(cursor):
+    """
+    Return the entire history table from the database
+    :param cursor: cursor instance
+    :return:
+    """
     cursor.execute('''SELECT * FROM history''')
     rows = cursor.fetchall()
     return [dict(zip(['ID', 'DATE', 'AMOUNT', 'CUR', 'COUNTRY'], row)) for row in rows]
 
 
 def insert_into_limits(id, country: str, currency: str, max_limit, connection, cursor):
+    """
+    Insert a new record into the limits table
+    :param id: new ID to insert
+    :param country: new country to insert, possible options - 'RUS', 'AUS', 'ABH'
+    :param currency: new currency to insert, possible options - 'RUB', 'USD', 'EUR'
+    :param max_limit: maximum monthly limit in corresponding currency for the certain ID
+    :param connection: connection instance
+    :param cursor: cursor instance
+    :return:
+    """
     if country in COUNTRIES_LIST and currency in CURRENCIES_LIST:
         query = '''INSERT INTO limits (ID, COUNTRY, CUR, MAX_LIMIT) VALUES ({}, '{}', '{}', {})'''
         cursor.execute(query.format(id, country.upper(), currency.upper(), max_limit))
@@ -46,6 +76,17 @@ def insert_into_limits(id, country: str, currency: str, max_limit, connection, c
 
 
 def insert_into_history(id, date, amount, currency: str, country: str, connection, cursor):
+    """
+    Insert a new record into the history table
+    :param id: new ID to insert
+    :param date: date to insert in format '%Y-%m-%d %H:%M:%S', or 'now' for the current time
+    :param amount: amount to insert in corresponding currency
+    :param currency: new currency to insert, possible options - 'RUB', 'USD', 'EUR'
+    :param country: new country to insert, possible options - 'RUS', 'AUS', 'ABH'
+    :param connection: connection instance
+    :param cursor: cursor instance
+    :return:
+    """
     if country in COUNTRIES_LIST and currency in CURRENCIES_LIST:
         time_data = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
         cur_month, cur_year = time_data.month, time_data.year
@@ -80,6 +121,16 @@ def insert_into_history(id, date, amount, currency: str, country: str, connectio
 
 
 def update_limits(id, connection, cursor, currency=None, country=None, max_limit=None):
+    """
+    Update existing limit record
+    :param id: ID to update
+    :param connection: connection instance
+    :param cursor: cursor instance
+    :param currency: currency to update, possible options - 'RUB', 'USD', 'EUR'
+    :param country: country to insert, possible options - 'RUS', 'AUS', 'ABH'
+    :param max_limit: maximum monthly limit in corresponding currency for the certain ID
+    :return:
+    """
     columns = ['CUR', 'COUNTRY', 'MAX_LIMIT']
     if country in COUNTRIES_LIST + [None] and currency in CURRENCIES_LIST + [None]:
         counter = 0
@@ -98,6 +149,13 @@ def update_limits(id, connection, cursor, currency=None, country=None, max_limit
 
 
 def delete_from_limits_by_id(id, connection, cursor):
+    """
+    Delete row with a certain ID from limits table
+    :param id: ID to delete
+    :param connection: connection instance
+    :param cursor: cursor instance
+    :return:
+    """
     check_for_existence = get_limit_by_id(id, cursor)
     if check_for_existence.get('failure') is None:
         delete_query = '''Delete from limits where id = {}'''
@@ -111,6 +169,10 @@ def delete_from_limits_by_id(id, connection, cursor):
 
 
 def show_all_pretty_tables():
+    """
+    Show limits and history tables in a pretty pandas.DataFrame format
+    :return:
+    """
     print('Limits table')
     print(pd.DataFrame.from_records(get_limits_table(cursor)))
     print('\nHistory table')
