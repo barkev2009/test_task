@@ -2,7 +2,7 @@ import psycopg2
 from datetime import datetime
 import pandas as pd
 from utils import exchange_into_rub
-from app import CURRENCIES_LIST, COUNTRIES_LIST, DATABASE_NAME
+from app import *
 
 
 def drop_table(table_name):
@@ -180,11 +180,10 @@ def show_all_pretty_tables():
 
 
 if __name__ == '__main__':
-    connection = psycopg2.connect(user='postgres',
-                                  password='1111',
-                                  host='127.0.0.1',
-                                  port='5432',
+    connection = psycopg2.connect(user=POSTGRESQL_USER,
+                                  password=POSTGRESQL_PASSWORD,
+                                  host=POSTGRESQL_HOST,
+                                  port=POSTGRESQL_PORT,
                                   database=DATABASE_NAME)
     cursor = connection.cursor()
-
     show_all_pretty_tables()
