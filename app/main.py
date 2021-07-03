@@ -2,7 +2,8 @@ from aiohttp import web
 import json
 from app.table_handler import *
 from datetime import datetime
-from app import POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_HOST, POSTGRESQL_PORT, DATABASE_NAME
+from app import POSTGRESQL_HOST
+from utils import PostgreSQLStarter
 
 
 async def get_all_limits_handler(request):
@@ -136,12 +137,7 @@ async def delete_limit_handler(request):
 
 
 if __name__ == '__main__':
-    connection = psycopg2.connect(user=POSTGRESQL_USER,
-                                  password=POSTGRESQL_PASSWORD,
-                                  host=POSTGRESQL_HOST,
-                                  port=POSTGRESQL_PORT,
-                                  database=DATABASE_NAME)
-    cursor = connection.cursor()
+    connection, cursor = PostgreSQLStarter().get_connection_and_cursor()
     app = web.Application()
     app.add_routes([
         web.get('/api/limits', get_all_limits_handler),

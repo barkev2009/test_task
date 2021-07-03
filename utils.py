@@ -1,3 +1,30 @@
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+from app import POSTGRESQL_USER, POSTGRESQL_PASSWORD, POSTGRESQL_HOST, POSTGRESQL_PORT, DATABASE_NAME
+
+
+class PostgreSQLStarter:
+    def __init__(self, database_exists=True):
+        self.database_exists = database_exists
+        if self.database_exists:
+            self.connection = psycopg2.connect(user=POSTGRESQL_USER,
+                                               password=POSTGRESQL_PASSWORD,
+                                               host=POSTGRESQL_HOST,
+                                               port=POSTGRESQL_PORT,
+                                               database=DATABASE_NAME)
+            self.cursor = self.connection.cursor()
+        else:
+            self.connection = psycopg2.connect(user=POSTGRESQL_USER,
+                                               password=POSTGRESQL_PASSWORD,
+                                               host=POSTGRESQL_HOST,
+                                               port=POSTGRESQL_PORT)
+            self.connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            self.cursor = self.connection.cursor()
+
+    def get_connection_and_cursor(self):
+        return self.connection, self.cursor
+
+
 def exchange_into_rub(money_data):
     rubbles = euros = dollars = 0
     for item in money_data:
