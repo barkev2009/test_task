@@ -1,6 +1,6 @@
 from datetime import datetime
 import pandas as pd
-from utils import exchange_into_rub, PostgreSQLStarter
+from utils import exchange_into_rub, PostgreSQLStarter, get_exchange_rates
 from app import COUNTRIES_LIST, CURRENCIES_LIST
 
 
@@ -94,12 +94,13 @@ def insert_into_history(id, date, amount, currency: str, country: str, connectio
 
         history_query = '''SELECT amount, cur FROM history WHERE date BETWEEN date '{}-{}-1' and date '{}-{}-1' '''
         cursor.execute(history_query.format(cur_year, cur_month, next_year, next_month))
-        overall_to_date = exchange_into_rub(cursor.fetchall())
-        rub_amount = exchange_into_rub([(amount, currency.upper())])
+        exchange_rates = get_exchange_rates()
+        overall_to_date = exchange_into_rub(cursor.fetchall(), exchange_rates)
+        rub_amount = exchange_into_rub([(amount, currency.upper())], exchange_rates)
 
         limits_query = '''SELECT max_limit, cur FROM limits WHERE id = {} '''
         cursor.execute(limits_query.format(id))
-        max_limit = exchange_into_rub([cursor.fetchone()])
+        max_limit = exchange_into_rub([cursor.fetchone()], exchange_rates)
 
         if overall_to_date + rub_amount <= max_limit:
             insert_query = '''INSERT INTO history (ID, DATE, AMOUNT, CUR, COUNTRY) 

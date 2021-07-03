@@ -1,5 +1,6 @@
 COUNTRIES_LIST = ['RUS', 'rus', 'ABH', 'abh', 'AUS', 'aus']
 CURRENCIES_LIST = ['RUB', 'rub', 'USD', 'usd', 'EUR', 'eur']
+ALLOW_PARSING = True
 
 POSTGRESQL_USER = 'postgres'
 POSTGRESQL_PASSWORD = '1111'
