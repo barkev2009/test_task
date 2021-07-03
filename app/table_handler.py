@@ -1,4 +1,3 @@
-import psycopg2
 from datetime import datetime
 import pandas as pd
 from utils import exchange_into_rub, PostgreSQLStarter
